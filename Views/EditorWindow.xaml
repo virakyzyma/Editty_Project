@@ -1,0 +1,102 @@
+﻿<models:BaseWindow
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Editty.Views"
+        xmlns:models="clr-namespace:Editty.Models"
+        xmlns:controls="clr-namespace:Editty.UserControls"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes" x:Class="Editty.Views.EditorWindow"
+        mc:Ignorable="d">
+    <Window.Resources>
+        <Style TargetType="TextBlock">
+            <Setter Property="FontSize" Value="13"/>
+        </Style>
+    </Window.Resources>
+    <Window.InputBindings>
+        <KeyBinding Key="O" Modifiers="Ctrl" Command="{Binding OpenFileCommand}"></KeyBinding>
+        <KeyBinding Key="S" Modifiers="Ctrl" Command="{Binding SaveFileCommand}"></KeyBinding>
+        <KeyBinding Key="N" Modifiers="Ctrl" Command="{Binding CreateFileCommand}"></KeyBinding>
+        <KeyBinding Key="S" Modifiers="Ctrl+Shift" Command="{Binding SaveAsFileCommand}"></KeyBinding>
+        <KeyBinding Key="F" Modifiers="Ctrl" Command="{Binding FindSubstringCommand}"></KeyBinding>
+    </Window.InputBindings>
+    <Grid Background="#f1f1f1">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="50"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <Menu VerticalAlignment="Top" Background="#ffffff">
+            <MenuItem Header="Файл" Margin="0" Height="30">
+                <MenuItem Header="Создать файл" InputGestureText="Ctrl+N" Command="{Binding CreateFileCommand}"/>
+                <MenuItem Header="Открыть файл" InputGestureText="Ctrl+O" Command="{Binding OpenFileCommand}"/>
+                <Separator/>
+                <MenuItem Header="Сохранить файл" >
+                    <MenuItem Header="Сохранить..." InputGestureText="Ctrl+S" Command="{Binding SaveFileCommand}"/>
+                    <MenuItem Header="Сохранить как" InputGestureText="Ctrl+Shift+S" Command="{Binding SaveAsFileCommand}"/>
+                </MenuItem>
+            </MenuItem>
+            <Separator/>
+            <MenuItem Header="Поиск" Height="30" InputGestureText="Ctrl+F" Command="{Binding FindSubstringCommand}"></MenuItem>
+        </Menu>
+        <ToolBarTray Grid.Row="1" IsLocked="True">
+            <ToolBar>
+                <Button x:Name="textFormattingButton" Click="textFormattingButton_Click">
+                    <StackPanel Orientation="Horizontal">
+                        <Image Source="../images/icons/text-group.png" Width="20"/>
+                        <TextBlock Margin="10 0 0 0"><Run Text="Текст"/></TextBlock>
+                    </StackPanel>
+                </Button>
+                <Separator/>
+                <Button x:Name="mediaHandlerButton" Click="mediaHandlerButton_Click">
+                    <StackPanel Orientation="Horizontal">
+                        <Image Source="../images/icons/image-group.png" Width="20"/>
+                        <TextBlock Margin="10 0 0 0"><Run Text="Медиа"/></TextBlock>
+                    </StackPanel>
+                </Button>
+                <Separator/>
+                <Button x:Name="listHandlerButton" Click="listHandlerButton_Click">
+                    <StackPanel Orientation="Horizontal">
+                        <Image Source="../images/icons/list-group.png" Width="20"/>
+                        <TextBlock Margin="10 0 0 0"><Run Text="Списки"/></TextBlock>
+                    </StackPanel>
+                </Button>
+            </ToolBar>
+        </ToolBarTray>
+        <Grid Grid.Row="2" Background="#dedede" Margin="0 10 0 0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="150"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <controls:BaseAsideControl x:Name="mainControl"></controls:BaseAsideControl>
+            <Grid Grid.Column="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="40"/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Stretch" Background="#e8e8e8"
+                            Visibility="{Binding DocumentIsOpen, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <Border BorderThickness="0 2 0 0">
+                        <Border.BorderBrush>
+                            <SolidColorBrush Color="#8bc34a" Opacity="1"/>
+                        </Border.BorderBrush>
+                        <TextBlock x:Name="filePath" Text="{Binding FileName}" VerticalAlignment="Center"
+                                   Margin="10 0 10 0" FontSize="15"></TextBlock>
+                    </Border>
+                </StackPanel>
+                <Border Grid.Row="1" ClipToBounds="True">
+                    <Border.Effect>
+                        <DropShadowEffect BlurRadius="8" ShadowDepth="0" Color="LightGray"/>
+                    </Border.Effect>
+                    <RichTextBox x:Name="textBox" Grid.Column="1" AcceptsTab="True"
+                                 Visibility="{Binding DocumentIsOpen, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                 VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Visible"
+                                 Background="{Binding BackgroundColor}" Padding="40 20 20 10" MaxWidth="875"
+                                 DataContextChanged="textBox_DataContextChanged" TextChanged="textBox_TextChanged"/>
+                </Border>
+                <WebBrowser x:Name="pdfWebBrowser" Grid.Row="1" Visibility="Collapsed"></WebBrowser>
+            </Grid>
+            <controls:LoadingLabelControl x:Name="loadingLabel" Grid.Column="1" Visibility="Collapsed"></controls:LoadingLabelControl>
+        </Grid>
+    </Grid>
+</models:BaseWindow>
